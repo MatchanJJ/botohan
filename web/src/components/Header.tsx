@@ -5,11 +5,7 @@ import { useSyncExternalStore } from "react";
 import { useConnect, useConnection, useConnectors, useDisconnect, useSwitchChain } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { shortAddress } from "@/lib/format";
-
-const button =
-  "h-10 rounded-[6px] px-4 font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eth disabled:opacity-60";
-const primary = `${button} bg-eth text-paper hover:bg-eth/90`;
-const secondary = `${button} border border-eth text-eth hover:bg-eth/10`;
+import { link, primaryButton as primary, secondaryButton as secondary } from "@/lib/ui";
 
 // The server can't see the extension, so it assumes one is there; the client corrects it after hydration.
 function useHasInjectedWallet() {
@@ -89,7 +85,7 @@ function WalletControls() {
         href="https://metamask.io/download/"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-eth underline focus-visible:outline-2 focus-visible:outline-eth"
+        className={link}
       >
         Install MetaMask to vote
       </a>
