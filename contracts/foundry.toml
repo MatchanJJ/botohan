@@ -4,3 +4,8 @@ out = "out"
 libs = ["lib"]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+[lint]
+# Polls are scheduled by timestamp on purpose (seconds of validator drift don't matter here),
+# and createPoll must reject a bad option inside the copy loop.
+exclude_lints = ["block-timestamp", "require-revert-in-loop"]
