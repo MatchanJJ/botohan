@@ -1,0 +1,22 @@
+# node / next.js
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel/
+.pnpm-debug.log*
+npm-debug.log*
+
+# foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# env: never commit secrets
+.env*
+!.env.example
+
+# os / editor
+.DS_Store
+Thumbs.db
