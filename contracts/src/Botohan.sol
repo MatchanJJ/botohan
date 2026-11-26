@@ -96,6 +96,23 @@ contract Botohan is Ownable {
         emit PollCreated(pollId, title, options.length, startsAt, endsAt, restricted);
     }
 
+    /// @notice Cast your vote. One vote per wallet per poll, and it can't be changed.
+    /// @param pollId The poll to vote in.
+    /// @param option Index of the chosen option in the poll's `options`.
+    function vote(uint256 pollId, uint256 option) external {
+        Poll storage poll = _existing(pollId);
+        if (block.timestamp < poll.startsAt || block.timestamp >= poll.endsAt) revert PollNotOpen(pollId);
+        if (option >= poll.options.length) revert InvalidOption(option);
+        if (poll.restricted && !isAllowed[pollId][msg.sender]) revert NotAllowed(msg.sender);
+        if (hasVoted[pollId][msg.sender]) revert AlreadyVoted(msg.sender);
+
+        hasVoted[pollId][msg.sender] = true;
+        _votes[pollId][option]++;
+        poll.totalVotes++;
+
+        emit VoteCast(pollId, msg.sender, option);
+    }
+
     /// @notice Get a poll's full details.
     /// @param pollId The poll to read.
     function getPoll(uint256 pollId) external view returns (Poll memory) {
