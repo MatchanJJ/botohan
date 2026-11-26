@@ -2,6 +2,9 @@
 // Botohan
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x901fb78eC268f1c92a8a4D8a7f63bB43B6d3BD27)
+ */
 export const botohanAbi = [
   { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
   {
@@ -289,3 +292,18 @@ export const botohanAbi = [
   },
   { type: 'error', inputs: [], name: 'TooManyVoters' },
 ] as const
+
+/**
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x901fb78eC268f1c92a8a4D8a7f63bB43B6d3BD27)
+ */
+export const botohanAddress = {
+  11155111: '0x901fb78eC268f1c92a8a4D8a7f63bB43B6d3BD27',
+} as const
+
+/**
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x901fb78eC268f1c92a8a4D8a7f63bB43B6d3BD27)
+ */
+export const botohanConfig = {
+  address: botohanAddress,
+  abi: botohanAbi,
+} as const
