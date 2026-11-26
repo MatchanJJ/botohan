@@ -96,6 +96,39 @@ contract Botohan is Ownable {
         emit PollCreated(pollId, title, options.length, startsAt, endsAt, restricted);
     }
 
+    /// @notice Allow wallets to vote in a restricted poll. Owner only.
+    /// @dev Skips `address(0)` and wallets already allowed. Emits the number actually added.
+    /// @param pollId The poll to add voters to.
+    /// @param voters Up to 200 wallet addresses per call.
+    function addVoters(uint256 pollId, address[] calldata voters) external onlyOwner {
+        _existing(pollId);
+        if (voters.length > MAX_VOTERS_PER_CALL) revert TooManyVoters();
+
+        uint256 added = 0;
+        for (uint256 i; i < voters.length; ++i) {
+            address voter = voters[i];
+            if (voter == address(0) || isAllowed[pollId][voter]) continue;
+            isAllowed[pollId][voter] = true;
+            ++added;
+        }
+
+        emit VotersAdded(pollId, added);
+    }
+
+    /// @notice End a poll now instead of at its scheduled end. Owner only.
+    /// @dev Does nothing if the poll has already ended. Votes already cast stay as they are.
+    /// @param pollId The poll to close.
+    function closePoll(uint256 pollId) external onlyOwner {
+        Poll storage poll = _existing(pollId);
+        if (block.timestamp >= poll.endsAt) return;
+
+        // Safe: block.timestamp < endsAt here, and endsAt is a uint64.
+        // forge-lint: disable-next-line(unsafe-typecast)
+        uint64 closedAt = uint64(block.timestamp);
+        poll.endsAt = closedAt;
+        emit PollClosed(pollId, closedAt);
+    }
+
     /// @notice Cast your vote. One vote per wallet per poll, and it can't be changed.
     /// @param pollId The poll to vote in.
     /// @param option Index of the chosen option in the poll's `options`.
