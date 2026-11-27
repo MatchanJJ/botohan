@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useReadContract, useReadContracts } from "wagmi";
-import { botohan, pollStatus, type PollStatus } from "@/lib/contract";
+import { pollStatus, type PollStatus } from "@/lib/contract";
 import { formatDuration, plural } from "@/lib/format";
 import { link } from "@/lib/ui";
 import { useNow } from "@/lib/useNow";
+import { usePolls } from "@/lib/usePolls";
 
 const groups: { status: PollStatus; heading: string }[] = [
   { status: "open", heading: "Open" },
@@ -15,26 +15,15 @@ const groups: { status: PollStatus; heading: string }[] = [
 
 export function PollList() {
   const now = useNow();
-  const count = useReadContract({ ...botohan, functionName: "pollCount" });
-  const n = Number(count.data ?? 0n);
-  // Newest first: ids n-1 … 0.
-  const ids = Array.from({ length: n }, (_, i) => BigInt(n - 1 - i));
-  const polls = useReadContracts({
-    contracts: ids.map((id) => ({ ...botohan, functionName: "getPoll", args: [id] }) as const),
-    query: { enabled: n > 0 },
-  });
+  const { rows: all, isError, isPending } = usePolls();
 
-  if (count.isError || polls.isError) {
+  if (isError) {
     return <p className="text-bad">Couldn&apos;t load polls. Check your connection and refresh.</p>;
   }
-  if (count.isPending || (n > 0 && polls.isPending) || now === 0) {
-    return <p className="text-grey">Loading polls…</p>;
-  }
-  if (n === 0) return <p className="text-grey">No polls yet.</p>;
+  if (isPending || now === 0) return <p className="text-grey">Loading polls…</p>;
+  if (all.length === 0) return <p className="text-grey">No polls yet.</p>;
 
-  const rows = (polls.data ?? []).flatMap((r, i) =>
-    r.status === "success" ? [{ id: ids[i], poll: r.result, status: pollStatus(r.result, now) }] : [],
-  );
+  const rows = all.map(({ id, poll }) => ({ id, poll, status: pollStatus(poll, now) }));
 
   return (
     <div className="space-y-8">

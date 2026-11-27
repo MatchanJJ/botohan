@@ -5,3 +5,5 @@ const button = `h-10 rounded-[6px] px-4 font-semibold transition-colors disabled
 export const primaryButton = `${button} bg-eth text-paper hover:bg-eth/90 disabled:hover:bg-eth`;
 export const secondaryButton = `${button} border border-eth text-eth hover:bg-eth/10`;
 export const link = `text-eth underline hover:no-underline ${focus}`;
+export const input = `h-10 w-full rounded-[4px] border border-eth bg-paper px-3 ${focus}`;
+export const label = "mb-1 block font-semibold";
