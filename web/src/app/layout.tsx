@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Anonymous_Pro, Archivo_Black, Fira_Sans } from "next/font/google";
-import { Header } from "@/components/Header";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -34,10 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${archivoBlack.variable} ${firaSans.variable} ${anonymousPro.variable} antialiased`}
     >
       <body className="font-sans text-base">
-        <Providers>
-          <Header />
-          <main className="mx-auto max-w-[880px] px-4 py-8">{children}</main>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

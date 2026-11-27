@@ -5,11 +5,13 @@ import { useState } from "react";
 import { useConnection, useReadContracts } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { ResultsBars } from "@/components/ResultsBars";
+import { VoteFeed } from "@/components/VoteFeed";
 import { VoteForm } from "@/components/VoteForm";
 import { YourVote } from "@/components/YourVote";
 import { botohan, pollStatus } from "@/lib/contract";
 import { formatDuration, plural } from "@/lib/format";
 import { useNow } from "@/lib/useNow";
+import { usePollLive } from "@/lib/usePollLive";
 
 export function PollView() {
   const { id: rawId } = useParams<{ id: string }>();
@@ -22,12 +24,8 @@ function Poll({ id }: { id: bigint }) {
   const { address, chainId, status: walletStatus } = useConnection();
   const [votedHere, setVotedHere] = useState(false);
 
-  const poll = useReadContracts({
-    contracts: [
-      { ...botohan, functionName: "getPoll", args: [id] },
-      { ...botohan, functionName: "getResults", args: [id] },
-    ],
-  });
+  const live = usePollLive(id, 20);
+  const poll = live.reads;
   // Pre-checks, so most errors show before the user signs anything (APP_FLOW.md).
   const wallet = useReadContracts({
     contracts: [
@@ -80,6 +78,7 @@ function Poll({ id }: { id: bigint }) {
       </header>
       {voteArea}
       <ResultsBars options={p.options} results={resultsRead.result} />
+      <VoteFeed {...live} now={now} />
     </article>
   );
 }

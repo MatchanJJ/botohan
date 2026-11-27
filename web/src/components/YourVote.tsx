@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { usePublicClient } from "wagmi";
 import { botohan, deployBlock, txUrl } from "@/lib/contract";
+import { recentVotes } from "@/lib/events";
 import { link } from "@/lib/ui";
 
 type Props = { pollId: bigint; voter: `0x${string}`; options: readonly string[] };
@@ -13,28 +14,21 @@ export function YourVote({ pollId, voter, options }: Props) {
   const vote = useQuery({
     queryKey: ["yourVote", botohan.address, pollId.toString(), voter],
     queryFn: async () => {
-      const logs = await client!.getContractEvents({
-        abi: botohan.abi,
-        address: botohan.address,
-        eventName: "VoteCast",
-        args: { pollId, voter },
-        fromBlock: deployBlock,
-      });
-      return logs[0] ?? null;
+      const [mine] = await recentVotes(client!, { address: botohan.address, fromBlock: deployBlock, pollId, voter, limit: 1 });
+      return mine ?? null;
     },
     enabled: !!client,
     staleTime: Infinity,
   });
 
-  const event = vote.data;
-  const option = event?.args.option;
+  const mine = vote.data;
   return (
     <p className="border-t-[3px] border-ink pt-4">
       {/* If the RPC refuses the log query, still say they voted, just not for what. */}
-      {event && option !== undefined ? (
+      {mine ? (
         <>
-          You voted for <strong>{options[Number(option)]}</strong>.{" "}
-          <a href={txUrl(event.transactionHash)} target="_blank" rel="noopener noreferrer" className={link}>
+          You voted for <strong>{options[Number(mine.option)]}</strong>.{" "}
+          <a href={txUrl(mine.hash)} target="_blank" rel="noopener noreferrer" className={link}>
             View on Etherscan
           </a>
         </>
