@@ -14,7 +14,6 @@ jobs:
         working-directory: web
     env:
       NEXT_PUBLIC_SEPOLIA_RPC_URL: https://rpc.sepolia.org
-      NEXT_PUBLIC_CONTRACT_ADDRESS: "0x0000000000000000000000000000000000000000"
       NEXT_PUBLIC_DEPLOY_BLOCK: "0"
       NEXT_PUBLIC_SITE_URL: https://botohan.vercel.app
     steps:

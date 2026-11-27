@@ -86,9 +86,11 @@ export const config = createConfig({
 | Name | Example | Notes |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SEPOLIA_RPC_URL` | `https://eth-sepolia.g.alchemy.com/v2/<key>` | Public in the browser: restrict the key to the Vercel domain in the provider dashboard |
-| `NEXT_PUBLIC_CONTRACT_ADDRESS` | `0x…` | From `contracts/deployments/sepolia.json` |
 | `NEXT_PUBLIC_DEPLOY_BLOCK` | `1234567` | Start block for event queries |
 | `NEXT_PUBLIC_SITE_URL` | `https://botohan.vercel.app` | Used for the QR code |
+
+The contract address is not an env var: `@wagmi/cli` writes it into `src/generated.ts` from
+`contracts/deployments/sepolia.json` (`pnpm wagmi generate`).
 
 A free public Sepolia RPC works for development, but use a provider key (Alchemy or Infura) for the
 workshop: 30+ students polling at once can hit public rate limits.
